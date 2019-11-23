@@ -41,9 +41,9 @@ class DatabaseManager():
 	# Function to save temperature/ humididty values to DB Table
 	def dht11_temperature_data(self, temperature, humidity):
 		#Push into DB Table
-		today = self.get_date()
+		today, current_time = self.get_date()
 		db_object = DatabaseManager()
-		db_object.add_db_record("INSERT INTO dht11 (date, temperature, humidity, measuring_id) VALUES (?, ?, ?,?)", (today, temperature, humidity, 1))
+		db_object.add_db_record("INSERT INTO dht11 (date, temperature, humidity, measuring_id) VALUES (?, ?, ?, ?,?)", (today, current_time, temperature, humidity, 1))
 		del db_object # function to delete an object.
 		print ("Inserted Temperature Data.")
 		print ("")
@@ -51,13 +51,14 @@ class DatabaseManager():
 	# # Function to save dust values to DB Table
 	def sds11_dust_data(self, pm10, pm25):
 		#Push into DB Table
-		today = self.get_date()
+		today, current_time = self.get_date()
 		db_object = DatabaseManager()
-		db_object.add_db_record("INSERT INTO sds11 (date, pm10, pm25, measuring_id) VALUES (?, ?, ?,?)", (today, pm10, pm25, 1))
+		db_object.add_db_record("INSERT INTO sds11 (date, pm10, pm25, measuring_id) VALUES (?, ?, ?, ?,?)", (today, current_time, pm10, pm25, 1))
 		del db_object 
 		print ("Inserted Humidity Data.")
 		print ("")
 
 	def get_date(self):
-		return (datetime.date.today()).strftime("%d-%m-%Y %H:%M:%S:%f")
+		return (datetime.date.today()).strftime("%d-%m-%Y"), (datetime.date.today()).strftime("%H:%M:%S") #date, time
+	
 	
