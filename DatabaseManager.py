@@ -38,27 +38,43 @@ class DatabaseManager():
 			value1, value2 = self.parse_payload(str(decoded_payload))
 			self.sds11_dust_data(value1, value2)
 
+    # Function to get the current day, month, year of the measuring
+	def get_date(self):
+		day = (datetime.date.today()).strftime("%d")
+		month = (datetime.date.today()).strftime("%m")
+		year = (datetime.date.today()).strftime("%Y") 
+		return year, month, day
+		
+    # Function to get the current hour and minutes of the measuring
+	def get_day(self):
+		hour = (datetime.date.today()).strftime("%H")
+		minute = (datetime.date.today()).strftime("%M") 
+		return hour, minute
+
 	# Function to save temperature/ humididty values to DB Table
 	def dht11_temperature_data(self, temperature, humidity):
 		#Push into DB Table
-		today, current_time = self.get_date()
+		year, month, day = self.get_date()
+		hour, minute = self.get_day()
 		db_object = DatabaseManager()
-		db_object.add_db_record("INSERT INTO dht11 (date, temperature, humidity, measuring_id) VALUES (?, ?, ?, ?,?)", (today, current_time, temperature, humidity, 1))
+		db_object.add_db_record("INSERT INTO dht11 (date, temperature, humidity, measuring_id) VALUES (?, ?, ?, ?,?)", (temperature, humidity, 1))
+		db_object.add_db_record("INSERT INTO date (year, month, day, hour, minute) VALUES (?, ?, ?, ?, ?)", (year, month, day, hour, minute))
 		del db_object # function to delete an object.
-		print ("Inserted Temperature Data.")
+		print ("Inserted temperature data.")
 		print ("")
 
 	# # Function to save dust values to DB Table
 	def sds11_dust_data(self, pm10, pm25):
 		#Push into DB Table
-		today, current_time = self.get_date()
+		year, month, day = self.get_date()
+		hour, minute = self.get_day()
 		db_object = DatabaseManager()
-		db_object.add_db_record("INSERT INTO sds11 (date, pm10, pm25, measuring_id) VALUES (?, ?, ?, ?,?)", (today, current_time, pm10, pm25, 1))
+		db_object.add_db_record("INSERT INTO sds11 (date, pm10, pm25, measuring_id) VALUES (?, ?, ?, ?,?)", (pm10, pm25, 1))
+		db_object.add_db_record("INSERT INTO date (year, month, day, hour, minute) VALUES (?, ?, ?, ?, ?)", (year, month, day, hour, minute))
 		del db_object 
-		print ("Inserted Humidity Data.")
+		print ("Inserted humidity data and date.")
 		print ("")
 
-	def get_date(self):
-		return (datetime.date.today()).strftime("%d-%m-%Y"), (datetime.date.today()).strftime("%H:%M:%S") #date, time
+	
 	
 	
