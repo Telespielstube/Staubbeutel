@@ -9,8 +9,7 @@ from DatabaseManager import DatabaseManager
 
 #Command line parser
 parser = argparse.ArgumentParser()
-parser.add_argument("-p", required=True, help="path where the local SQLite database is stored")
-
+parser.add_argument("-p", default = "~/Staubbeutel_default.db", required = False, help = "path where the local SQLite database is stored. Ex.: python3 main.py -p /Users/marta/Staubbeutel.db")
 args = parser.parse_args()
 db_path = args.p
 if not os.path.exists(db_path):
@@ -26,8 +25,7 @@ mqtt_password = "12345"
 mqtt_topic = "/home/backyard/#" #subscribes to all messges of a topic that begins with pattern before the wildcard
 db = DatabaseManager(db_path)
 
-
-def on_connect(hivemq, obj, rc):
+def on_connect(hivemq, userdata, rc):
 	print("Connected with result code " + str(rc))
 	if rc is 0:
 		print("Connected to broker")
@@ -35,16 +33,16 @@ def on_connect(hivemq, obj, rc):
 	mqttc.subscribe(mqtt_topic, 0)
 	print("Subcribed")
 
-#Save Data into DB Table
+# When the broker has acknowledged the subscription, .
+def on_subscribe(hivemq, obj, message_id, granted_qos):
+    pass
+
+# The callback for when a PUBLISH message is received from the server.
 def on_message(hivemq, obj, message):
 	print ("MQTT Data Received...")
 	print ("MQTT Topic: " + str(message.topic))  
-	print ("Data: " + str(message.payload))
-	
-	db.sensor_Data_Handler(str(message.topic), message.payload)
-
-def on_subscribe(hivemq, obj, mid, granted_qos):
-    pass
+	print ("Data: " + str(message.payload.decode('UTF-8')))
+	db.sensor_data_handler(str(message.topic), str(message.payload.decode('utf-8')))
 
 connected = False
 mqttc = mqtt.Client("Staubbeutel")
@@ -64,7 +62,7 @@ except Error as ex:
 mqttc.loop_start()
 while connected is not True:
 	time.sleep(.5)
-	mqttc.subscribe(mqtt_topic)
+	mqttc.subscribe(mqtt_topic, 0)
 
 # Continue the network loop
 mqttc.loop_forever()

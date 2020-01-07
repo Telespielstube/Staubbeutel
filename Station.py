@@ -21,7 +21,7 @@ class Station():
             self.existing_id = cursor.lastrowid
             return True
 
-        # Adds a station to the "station" table
+    # Adds a station to the "station" table
     def add_station(self, name):
         station_id = 0
         if not self.check_if_station_exists(name):

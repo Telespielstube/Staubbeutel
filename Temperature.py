@@ -7,9 +7,7 @@ class Temperature():
 
     # Function to save temperature/ humididty values to DB Table
     def dht11_temperature_sample(self, temperature, humidity, station_id):
-        #Insert sensor data into database table
-        now = self.date.get_date()
-        date_id = self.db.add_db_record("INSERT INTO date (year, month, day, hour, minute) VALUES (?, ?, ?, ?, ?)", (now.year, now.month, now.day, now.hour, now.minute)) 
-        self.db.add_db_record("INSERT INTO dht11 (temperature, humidity, date_id, station_id) VALUES (?, ?, ?, ?)", (temperature, humidity, date_id, station_id))
+        now = self.date.get_date()   
+        self.db.add_db_record("INSERT INTO dht11 (temperature, humidity, timestamp, station_id) VALUES (?, ?, ?, ?)", (temperature, humidity, now, station_id))
         self.db.connection.close()
         print ("Inserted temperature data.\n")

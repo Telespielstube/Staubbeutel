@@ -4,7 +4,10 @@
             "name": "Mac",
             "includePath": [
                 "/Users/marta/Library/Arduino15/packages/esp8266/tools/**",
-                "/Users/marta/Library/Arduino15/packages/esp8266/hardware/esp8266/2.5.2/**"
+                "/Users/marta/Library/Arduino15/packages/esp8266/hardware/esp8266/2.5.2/**",
+                "/Users/marta/Library/Arduino15/packages/esp8266/hardware/esp8266/2.6.2/**",
+                "/Users/marta/Library/Arduino15/packages/esp8266/hardware/esp8266/2.6.0/**",
+                "/Users/marta/Library/Arduino15/packages/esp8266/hardware/esp8266/2.6.3/**"
             ],
             "forcedInclude": [],
             "macFrameworkPath": [

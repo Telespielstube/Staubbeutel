@@ -32,7 +32,7 @@ class DatabaseManager():
     def createTables(self):
         print("Creating database tables...")
         try:
-            with open('/Users/marta/SQLite/Staubbeutel.sql', 'r') as sql_file:
+            with open('/Users/marta/Documents/Python/Staubbeutel/Staubbeutel.sql', 'r') as sql_file:
                 sql_script = sql_file.read()
             cursor = self.connection.cursor()
             cursor.executescript(sql_script)
@@ -46,14 +46,12 @@ class DatabaseManager():
         splitted_payload = payload.split(',')
         return splitted_payload[0], splitted_payload[1]
 
-    def sensor_Data_Handler(self, topic, payload):
+    def sensor_data_handler(self, topic, payload):
         if topic == '/home/backyard/#':
             station_id = self.station.add_station(self.station.station_name) 
         if topic == '/home/backyard/dht11':
-            decoded_payload = payload.decode('UTF-8')
-            temperature, humidity = self.parse_payload(str(decoded_payload))
+            temperature, humidity = self.parse_payload(str(payload))
             self.temperature.dht11_temperature_sample(temperature, humidity, station_id)	
         if topic == '/home/backyard/sds11':
-            decoded_payload = payload.decode('UTF-8')
-            pm10, pm25 = self.parse_payload(str(decoded_payload))
+            pm10, pm25 = self.parse_payload(str(payload))
             self.finedust.sds11_dust_sample(pm10, pm25, station_id)
