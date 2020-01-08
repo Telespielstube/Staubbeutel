@@ -9,12 +9,14 @@ from DatabaseManager import DatabaseManager
 
 #Command line parser
 parser = argparse.ArgumentParser()
-parser.add_argument("-p", default = "~/Staubbeutel_default.db", required = False, help = "path where the local SQLite database is stored. Ex.: python3 main.py -p /Users/marta/Staubbeutel.db")
+parser.add_argument("-p", default = "/Users/marta/SQLite/Staubbeutel.db", required = False, help = "path where the local SQLite database is stored. Ex.: python3 main.py -p /Users/marta/Staubbeutel.db")
 args = parser.parse_args()
+parser.get_default
 db_path = args.p
 if not os.path.exists(db_path):
 	with open(db_path, 'w'):
 		pass
+db = DatabaseManager(db_path)
 
 #Broker credentials
 mqtt_broker = "broker.hivemq.com"
@@ -23,19 +25,14 @@ keep_alive_interval = 60
 mqtt_username = "telespielstube"
 mqtt_password = "12345"
 mqtt_topic = "/home/backyard/#" #subscribes to all messges of a topic that begins with pattern before the wildcard
-db = DatabaseManager(db_path)
 
-def on_connect(hivemq, userdata, rc):
+def on_connect(hivemq, userdata, flags, rc):
 	print("Connected with result code " + str(rc))
 	if rc is 0:
 		print("Connected to broker")
 		
 	mqttc.subscribe(mqtt_topic, 0)
 	print("Subcribed")
-
-# When the broker has acknowledged the subscription, .
-def on_subscribe(hivemq, obj, message_id, granted_qos):
-    pass
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(hivemq, obj, message):
@@ -50,7 +47,6 @@ mqttc = mqtt.Client("Staubbeutel")
 mqttc.username_pw_set(mqtt_username, mqtt_password)
 mqttc.on_message = on_message
 mqttc.on_connect = on_connect
-mqttc.on_subscribe = on_subscribe
 
 try:
 	mqttc.connect(mqtt_broker, mqtt_port, keep_alive_interval)
@@ -58,11 +54,6 @@ except Error as ex:
 	print("Error occured while connecting to broker. Due to: \n")
 	print(ex)
 	connected = False
-
-mqttc.loop_start()
-while connected is not True:
-	time.sleep(.5)
-	mqttc.subscribe(mqtt_topic, 0)
 
 # Continue the network loop
 mqttc.loop_forever()

@@ -14,19 +14,20 @@ class Station():
 
     def check_if_station_exists(self, name):
         cursor = self.db.connection.cursor()
-        cursor.execute("SELECT station_name FROM station")
-        if name is not cursor.fetchall():
+        cursor.execute("SELECT station_id FROM station WHERE station_name=:name", {"name": name})
+        row = cursor.fetchone()
+        if row == None:
             return False
         else:
-            self.existing_id = cursor.lastrowid
+            self.existing_id = row[0]
+            cursor.close()
             return True
 
     # Adds a station to the "station" table
     def add_station(self, name):
         station_id = 0
         if not self.check_if_station_exists(name):
-            station_id = self.db.add_db_record("INSERT INTO station (station_name) VALUES (?)", (name))
-            self.db.connection.close()
+            station_id = self.db.add_db_record("INSERT INTO station (station_name) VALUES (?)", (name,))
             return station_id
         else:
             station_id = self.existing_id

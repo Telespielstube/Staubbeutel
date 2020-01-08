@@ -9,5 +9,4 @@ class Temperature():
     def dht11_temperature_sample(self, temperature, humidity, station_id):
         now = self.date.get_date()   
         self.db.add_db_record("INSERT INTO dht11 (temperature, humidity, timestamp, station_id) VALUES (?, ?, ?, ?)", (temperature, humidity, now, station_id))
-        self.db.connection.close()
         print ("Inserted temperature data.\n")

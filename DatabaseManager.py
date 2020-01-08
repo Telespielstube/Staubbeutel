@@ -16,16 +16,17 @@ class DatabaseManager():
         self.station = Station(self, 'backyard')
         self.temperature = Temperature(self)
         self.finedust = Finedust(self)
+        self.cursor = self.connection.cursor()
 
-    def add_db_record(self, sql_query, args=()):      
+    def add_db_record(self, sql_query, args=()):
         try:
             cursor = self.connection.cursor()
             cursor.execute(sql_query, args)
-            last_id = cursor.lastrowid
+            last_id = self.cursor.lastrowid
+            self.connection.commit()
             cursor.close()
         except Error as e:
             print(e)
-        self.connection.commit()
         return last_id
 
     # Reads a script to create all tables needed for the database
@@ -37,6 +38,7 @@ class DatabaseManager():
             cursor = self.connection.cursor()
             cursor.executescript(sql_script)
             self.connection.commit()
+            cursor.close()
         except Error as e:
             print("Sql file could not be read, because of:")
             print(e)
@@ -47,8 +49,7 @@ class DatabaseManager():
         return splitted_payload[0], splitted_payload[1]
 
     def sensor_data_handler(self, topic, payload):
-        if topic == '/home/backyard/#':
-            station_id = self.station.add_station(self.station.station_name) 
+        station_id = self.station.add_station(self.station.station_name)
         if topic == '/home/backyard/dht11':
             temperature, humidity = self.parse_payload(str(payload))
             self.temperature.dht11_temperature_sample(temperature, humidity, station_id)	

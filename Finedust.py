@@ -9,5 +9,4 @@ class Finedust():
     def sds11_dust_sample(self, pm10, pm25, station_id):
         now = self.date.get_date()
         self.db.add_db_record("INSERT INTO sds11 (pm_10, pm_25, timestamp, station_id) VALUES (?, ?, ?, ?)", (pm10, pm25, now, station_id))
-        self.db.connection.close()
         print ("Inserted fine dust data.\n")
