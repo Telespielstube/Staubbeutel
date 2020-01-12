@@ -6,6 +6,10 @@ class Temperature():
         self.date = Date()
 
     # Function to save temperature/ humididty values to DB Table
+    #
+    # temperature   temerature value
+    # humidity      humidity value
+    # station_id    identification of the station
     def dht11_temperature_sample(self, temperature, humidity, station_id):
         now = self.date.get_date()   
         self.db.add_db_record("INSERT INTO dht11 (temperature, humidity, timestamp, station_id) VALUES (?, ?, ?, ?)", (temperature, humidity, now, station_id))

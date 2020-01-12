@@ -18,6 +18,10 @@ class DatabaseManager():
         self.finedust = Finedust(self)
         self.cursor = self.connection.cursor()
 
+    # Inserts data into tables.
+    #
+    # sql_query     SQL query (INSERT INTO, SELECT FROM...)
+    # args          vValues to be entered or called in the table
     def add_db_record(self, sql_query, args=()):
         try:
             cursor = self.connection.cursor()
@@ -42,12 +46,18 @@ class DatabaseManager():
         except Error as e:
             print("Sql file could not be read, because of:")
             print(e)
-        print("Finished!")
 
+    # Splits the message payload into substrings.
+    #
+    # payload   message content
     def parse_payload(self, payload):
         splitted_payload = payload.split(',')
         return splitted_payload[0], splitted_payload[1]
 
+    # Chooses the appropriate function based on the topic.
+    #
+    # topic     Topic on which was the message was published
+    # payload   message content
     def sensor_data_handler(self, topic, payload):
         station_id = self.station.add_station(self.station.station_name)
         if topic == '/home/backyard/dht11':

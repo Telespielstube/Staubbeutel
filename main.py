@@ -11,8 +11,9 @@ from DatabaseManager import DatabaseManager
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", default = "/Users/marta/SQLite/Staubbeutel.db", required = False, help = "path where the local SQLite database is stored. Ex.: python3 main.py -p /Users/marta/Staubbeutel.db")
 args = parser.parse_args()
-parser.get_default
 db_path = args.p
+if db_path is None:
+	db_path = parser.get_default('p')
 if not os.path.exists(db_path):
 	with open(db_path, 'w'):
 		pass
@@ -26,27 +27,52 @@ mqtt_username = "telespielstube"
 mqtt_password = "12345"
 mqtt_topic = "/home/backyard/#" #subscribes to all messges of a topic that begins with pattern before the wildcard
 
-def on_connect(hivemq, userdata, flags, rc):
-	print("Connected with result code " + str(rc))
+# Called when broker responds to clients connection request.
+#
+# client	client instance for this callback.
+# userdata	private user data like username, password
+# flags		response flags sent by the broker
+# rc		connection result. 
+def on_connect(client, userdata, flags, rc):
 	if rc is 0:
-		print("Connected to broker")
-		
+		print("Connected to broker")		
 	mqttc.subscribe(mqtt_topic, 0)
 	print("Subcribed")
 
+# Called when broker responds to client subsscribe request.
+#
+# client	client instance for this callback.
+# userdata	private user data like username, password
+# mid		message id.
+# qos		quality of service level.
+def on_subscribe(client, userdata, mid, qos):
+	print("Subscribed: " + str(mid) + " " + str(qos))
+
 # The callback for when a PUBLISH message is received from the server.
-def on_message(hivemq, obj, message):
-	print ("MQTT Data Received...")
-	print ("MQTT Topic: " + str(message.topic))  
-	print ("Data: " + str(message.payload.decode('UTF-8')))
+#
+# client	client instance for this callback.
+# userdata	private user data like username, password
+# message	message content.
+def on_message(client, userdata, message):
 	db.sensor_data_handler(str(message.topic), str(message.payload.decode('utf-8')))
+
+# Callback function for disconnection
+#
+# client	client instance for this callback.
+# userdata	private user data like username, password
+# rc		connection result. 
+def on_disconnect(client, userdata, rc):
+    if rc is not 0:
+        print("Unexpected disconnection from broker.")
 
 connected = False
 mqttc = mqtt.Client("Staubbeutel")
-# Connect to broker and subcribe
+# Sets callback function to connect to broker and subcribe
 mqttc.username_pw_set(mqtt_username, mqtt_password)
-mqttc.on_message = on_message
 mqttc.on_connect = on_connect
+mqttc.on_subscribe = on_subscribe
+mqttc.on_message = on_message
+
 
 try:
 	mqttc.connect(mqtt_broker, mqtt_port, keep_alive_interval)
