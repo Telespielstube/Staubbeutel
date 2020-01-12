@@ -70,6 +70,7 @@ mqttc = mqtt.Client("Staubbeutel")
 # Sets callback function to connect to broker and subcribe
 mqttc.username_pw_set(mqtt_username, mqtt_password)
 mqttc.on_connect = on_connect
+mqttc.on_disconnect = on_disconnect
 mqttc.on_subscribe = on_subscribe
 mqttc.on_message = on_message
 
