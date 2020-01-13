@@ -4,9 +4,11 @@ from Date import Date
 from Station import Station
 from Temperature import Temperature
 from Finedust import Finedust
+from Email import Email
 
 class DatabaseManager():
     def __init__(self, db_path):
+        self.email = Email()
         self.date = Date()
         self.db_path = db_path
         self.connection = sqlite3.connect(self.db_path)

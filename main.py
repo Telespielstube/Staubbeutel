@@ -37,7 +37,7 @@ def on_connect(client, userdata, flags, rc):
 	if rc is 0:
 		print("Connected to broker")		
 	mqttc.subscribe(mqtt_topic, 0)
-	print("Subcribed")
+	print("Subscription pending...")
 
 # Called when broker responds to client subsscribe request.
 #
@@ -46,7 +46,7 @@ def on_connect(client, userdata, flags, rc):
 # mid		message id.
 # qos		quality of service level.
 def on_subscribe(client, userdata, mid, qos):
-	print("Subscribed: " + str(mid) + " " + str(qos))
+	print("Subscrition accpolished!")
 
 # The callback for when a PUBLISH message is received from the server.
 #
