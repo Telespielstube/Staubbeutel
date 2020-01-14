@@ -46,7 +46,7 @@ def on_connect(client, userdata, flags, rc):
 # mid		message id.
 # qos		quality of service level.
 def on_subscribe(client, userdata, mid, qos):
-	print("Subscrition accpolished!")
+	print("Subscrition accepted!")
 
 # The callback for when a PUBLISH message is received from the server.
 #

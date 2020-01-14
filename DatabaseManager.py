@@ -68,3 +68,5 @@ class DatabaseManager():
         if topic == '/home/backyard/sds11':
             pm10, pm25 = self.parse_payload(str(payload))
             self.finedust.sds11_dust_sample(pm10, pm25, station_id)
+        if topic == '/home/backyard/error':
+            self.email.sendErrorMessage()
